@@ -10,10 +10,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["Twitter/Api/Twitter.Api/Twitter.Api.csproj", "Twitter/Api/Twitter.Api/"]
-RUN dotnet restore "Twitter/Api/Twitter.Api/Twitter.Api.csproj"
+COPY ["Twitter/Twitter.Api/Twitter.Api.csproj", "Twitter/Twitter.Api/"]
+RUN dotnet restore "Twitter/Twitter.Api/Twitter.Api.csproj"
 COPY . .
-WORKDIR "/src/Twitter/Api/Twitter.Api"
+WORKDIR "/src/Twitter/Twitter.Api"
 RUN dotnet build "Twitter.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
