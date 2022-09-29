@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Domain.Models.Tweet;
 
 namespace Twitter.Domain.Models.UserRoles
 {
@@ -37,6 +38,8 @@ namespace Twitter.Domain.Models.UserRoles
         public IList<UserRole> UserRoles { get; set; }
         public IList<Token> Tokens { get; set; }
         public IList<Claim> Claims { get; set; }
+        public IList<Tweet.Tweet> Tweets { get; set; }
+        public IList<TagUser> TagUsers { get; set; }
         #endregion
     }
 }

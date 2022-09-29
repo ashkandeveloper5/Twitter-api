@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Domain.Models.Tweet;
 using Twitter.Domain.Models.UserRoles;
 
 namespace Twitter.Data.Context
@@ -27,7 +28,12 @@ namespace Twitter.Data.Context
         #endregion
 
         #region Tweets
-
+        public DbSet<Tweet> Tweets { get; set; }
+        public DbSet<TagUser> TagUsers { get; set; }
+        public DbSet<Hashtag> Hashtags { get; set; }
+        public DbSet<TweetHashtag> TweetHashtags { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<TagTweet> TagTweets { get; set; }
         #endregion
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
