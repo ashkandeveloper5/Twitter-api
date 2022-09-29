@@ -8,15 +8,32 @@ using System.Threading.Tasks;
 using Twitter.Data.Context;
 using Twitter.Domain.Interfaces;
 using Twitter.Domain.Models.UserRoles;
+using Twitter.Core.Security;
+using Twitter.Core.Utilities;
 
 namespace Twitter.Data.Repository
 {
     public class AccountRepository : IAccountRepository
     {
-        private TwitterContext _context;
+        private readonly TwitterContext _context;
         public AccountRepository(TwitterContext context)
         {
             _context = context;
+        }
+
+        public bool EditPasswordUser(string userEmail,string newPassword)
+        {
+            try
+            {
+                User user = _context.Users.SingleOrDefault(u=>u.Email==userEmail);
+                if (user != null) user.Password = newPassword;
+                SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool EditUser(User user)
@@ -75,13 +92,18 @@ namespace Twitter.Data.Repository
             return (result != null) ? true : false;
         }
 
-        public bool RegisterUser(User user)
+        public bool MatchPasswordForChange(string userEmail, string oldPassword)
+        {
+           return _context.Users.SingleOrDefault(u => u.Email == userEmail).Password == oldPassword ? true : false;
+        }
+
+        public bool RegisterUserByEmail(User user)
         {
             try
             {
-
-                if (_context.Users.SingleOrDefault(user) != null) return false;
-                _context.Users.AddAsync(user);
+                if (_context.Users.SingleOrDefault(u=>u.Email==user.Email) != null) return false;
+                user.UserId = UniqueCode.generateID();
+                _context.Users.Add(user);
                 SaveChanges();
                 return true;
             }

@@ -26,10 +26,10 @@ namespace Twitter.Domain.Models.UserRoles
         public string FirstName { get; set; }
         [MaxLength(100)]
         public string? LastName { get; set; }
-        public int Age { get; set; }
+        public int? Age { get; set; }
         [Required]
         public DateTime CreateDate { get; set; }
-        public DateTime BirthDay { get; set; }
+        public DateTime? BirthDay { get; set; }
         public bool IsDelete { get; set; } = false;
         public bool IsActive { get; set; } = false;
 

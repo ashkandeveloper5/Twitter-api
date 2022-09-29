@@ -27,6 +27,18 @@ namespace Twitter.Core.Services
             _accountRepository = accountRepository;
         }
 
+        public bool CheckMatchEmailAndPasswordForLogin(string userEmail, string userPassword)
+        {
+            return _accountRepository.GetUserByEmail(userEmail).Password == userPassword ? true : false;
+        }
+
+        public bool EditPasswordUser(EditPasswordUserDto editPasswordUserDto, string userEmail)
+        {
+            string OldPassword = PasswordEncoder.EncodePasswordMd5(editPasswordUserDto.OldPassword);
+            string Password = PasswordEncoder.EncodePasswordMd5(editPasswordUserDto.NewPassword);
+            return _accountRepository.MatchPasswordForChange(userEmail, OldPassword) ? _accountRepository.EditPasswordUser(userEmail, Password) : false;
+        }
+
         public User GetUserByEmail(string userEmail)
         {
             return _accountRepository.GetUserByEmail(userEmail);
@@ -37,7 +49,7 @@ namespace Twitter.Core.Services
             return _accountRepository.IsExistEmail(loginUserByEmailDto.Email) ? true : false;
         }
 
-        public bool RegisterUser(RegisterUserByEmailDto registerUserByEmailDto)
+        public bool RegisterUserByEmail(RegisterUserByEmailDto registerUserByEmailDto)
         {
             User user;
             try
@@ -54,7 +66,7 @@ namespace Twitter.Core.Services
             {
                 return false;
             }
-            return _accountRepository.RegisterUser(user);
+            return _accountRepository.RegisterUserByEmail(user);
         }
     }
 }

@@ -12,11 +12,6 @@ namespace Twitter.Data.Context
 {
     public class TwitterContext : DbContext
     {
-        private readonly IConfiguration _configuration;
-        public TwitterContext(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
         public TwitterContext(DbContextOptions<TwitterContext> options) : base(options)
         {
 
@@ -38,11 +33,6 @@ namespace Twitter.Data.Context
         {
             modelBuilder.Entity<Token>().HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
             base.OnModelCreating(modelBuilder);
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_configuration["ConnectionStrings"]);
-            base.OnConfiguring(optionsBuilder);
         }
     }
 }

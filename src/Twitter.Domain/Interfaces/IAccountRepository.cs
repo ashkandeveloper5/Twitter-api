@@ -17,8 +17,10 @@ namespace Twitter.Domain.Interfaces
         bool IsExistId(string userId);
         bool IsExistEmail(string userEmail);
         bool IsExistPhoneNumber(string userPhoneNumber);
-        bool RegisterUser(User user);
+        bool RegisterUserByEmail(User user);
         bool EditUser(User user);
+        bool EditPasswordUser(string userEmail,string newPassword);
+        bool MatchPasswordForChange(string userEmail,string newPassword);
         void SaveChanges();
         #endregion
     }

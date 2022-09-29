@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Twitter.Core.DTOs.Account;
 using Twitter.Core.Interfaces;
 using Twitter.Domain.Models.UserRoles;
+using Twitter.Core.Security;
 
 namespace Twitter.Api.Controllers
 {
@@ -20,21 +21,29 @@ namespace Twitter.Api.Controllers
             _accountService = accountService;
         }
         #region Login
-        [HttpGet]
-        public IActionResult Login(LoginUserByEmailDto loginUserDto)
+        [HttpPost("Login")]
+        public IActionResult Login([FromQuery] LoginUserByEmailDto loginUserDto)
         {
-            if (ModelState.IsValid) return BadRequest(loginUserDto);
+            if (User.Identity.IsAuthenticated) HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!ModelState.IsValid) return BadRequest(loginUserDto);
+
             //Method LoginUserByEmail is for checking the availability of email.
             if (!_accountService.LoginUserByEmail(loginUserDto)) return BadRequest(loginUserDto);
 
+            //Check is match password and email for login
+            if (!_accountService.CheckMatchEmailAndPasswordForLogin(loginUserDto.Email, PasswordEncoder.EncodePasswordMd5(loginUserDto.Password))) return BadRequest(loginUserDto);
+
+            //Get user
+            User user = _accountService.GetUserByEmail(loginUserDto.Email);
+
             #region Claims
             //Claims
-            User user = _accountService.GetUserByEmail(loginUserDto.Email);
             var claims = new List<System.Security.Claims.Claim>
                 {
                 new System.Security.Claims.Claim(ClaimTypes.NameIdentifier,user.UserId.ToString()),
                 new System.Security.Claims.Claim(ClaimTypes.Email,user.Email),
-                new System.Security.Claims.Claim(ClaimTypes.Name,user.FirstName),
+                new System.Security.Claims.Claim(ClaimTypes.Name,user.Email),
             };
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
@@ -48,19 +57,29 @@ namespace Twitter.Api.Controllers
         }
         #endregion
         #region Register
-        [HttpGet]
-        public IActionResult Register(RegisterUserByEmailDto registerUserDto)
+        [HttpPost("Register")]
+        public IActionResult Register([FromQuery] RegisterUserByEmailDto registerUserDto)
         {
-            if(!ModelState.IsValid)return BadRequest(registerUserDto);
-            if (!_accountService.RegisterUser(registerUserDto)) return BadRequest(registerUserDto);
+            if (!ModelState.IsValid) return BadRequest(registerUserDto);
+            if (!_accountService.RegisterUserByEmail(registerUserDto)) return BadRequest(registerUserDto);
             return NoContent();
         }
         #endregion
         #region Logout
-        [HttpGet]
+        [HttpPost("Logout")]
         public IActionResult Login()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return NoContent();
+        }
+        #endregion
+        #region EditPassword
+        [HttpPost("EditPassword")]
+        public IActionResult EditPassword([FromQuery] EditPasswordUserDto editPasswordUserDto)
+        {
+            if (!User.Identity.IsAuthenticated) return BadRequest(editPasswordUserDto);
+            if (!ModelState.IsValid) return BadRequest(editPasswordUserDto);
+            if (!_accountService.EditPasswordUser(editPasswordUserDto, User.Identity.Name)) return BadRequest(editPasswordUserDto);
             return NoContent();
         }
         #endregion

@@ -12,8 +12,10 @@ namespace Twitter.Core.Interfaces
     {
         #region User
         bool LoginUserByEmail(LoginUserByEmailDto loginUserByEmailDto);
-        bool RegisterUser(RegisterUserByEmailDto registerUserByEmailDto);
+        bool RegisterUserByEmail(RegisterUserByEmailDto registerUserByEmailDto);
         User GetUserByEmail(string userEmail);
+        bool EditPasswordUser(EditPasswordUserDto editPasswordUserDto,string userEmail);
+        bool CheckMatchEmailAndPasswordForLogin(string userEmail,string userPassword);
         #endregion
     }
 }

@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Core.Interfaces;
+using Twitter.Core.Services;
+using Twitter.Data.Repository;
+using Twitter.Domain.Interfaces;
 
 namespace Twitter.IoC.DependencyContainer
 {
@@ -11,7 +15,8 @@ namespace Twitter.IoC.DependencyContainer
     {
         public static void RegisterServices(IServiceCollection service)
         {
-            //service.AddScoped<>();
+            service.AddScoped<IAccountRepository,AccountRepository>();
+            service.AddScoped<IAccountService,AccountService>();
         }
     }
 }
