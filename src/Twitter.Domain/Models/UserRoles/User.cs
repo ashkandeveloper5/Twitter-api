@@ -20,12 +20,12 @@ namespace Twitter.Domain.Models.UserRoles
         [MinLength(6)]
         [MaxLength(100)]
         public string Password { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
         [Required]
         [MaxLength(100)]
         public string FirstName { get; set; }
         [MaxLength(100)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
         public int Age { get; set; }
         [Required]
         public DateTime CreateDate { get; set; }

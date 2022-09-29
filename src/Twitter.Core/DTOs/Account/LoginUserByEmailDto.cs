@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Twitter.Core.DTOs.Account
 {
-    public class LoginUserDto
+    public class LoginUserByEmailDto
     {
         [Required]
         [EmailAddress]

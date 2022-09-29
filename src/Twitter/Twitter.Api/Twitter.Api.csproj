@@ -14,4 +14,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Twitter.Core\Twitter.Core.csproj" />
+    <ProjectReference Include="..\..\Twitter.IoC\Twitter.IoC.csproj" />
+  </ItemGroup>
+
 </Project>
