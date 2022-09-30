@@ -15,16 +15,20 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+#region IoC
 RegisterServices(builder.Services);
+#endregion
+#region Server
 builder.Services.AddDbContext<TwitterContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
-
+#endregion
+#region Cookies
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(option =>
 {
     option.LoginPath = "/api/Account/Login";
     option.LogoutPath = "/api/Account/Logout";
     option.ExpireTimeSpan = TimeSpan.FromDays(5);
 });
-
+#endregion
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

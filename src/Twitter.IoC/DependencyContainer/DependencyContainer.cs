@@ -15,6 +15,15 @@ namespace Twitter.IoC.DependencyContainer
     {
         public static void RegisterServices(IServiceCollection service)
         {
+            //Role
+            service.AddScoped<IRoleRepository,RoleRepository>();
+            service.AddScoped<IRoleService,RoleService>();
+
+            //Tweet
+            service.AddScoped<ITweetRepository,TweetRepository>();
+            service.AddScoped<ITweetService,TweetService>();
+
+            //Account
             service.AddScoped<IAccountRepository,AccountRepository>();
             service.AddScoped<IAccountService,AccountService>();
         }

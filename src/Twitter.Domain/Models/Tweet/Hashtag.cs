@@ -12,6 +12,7 @@ namespace Twitter.Domain.Models.Tweet
         [Key]
         public string HashtagId { get; set; }
         public string Text { get; set; }
+        public bool IsDelete { get; set; }
 
         #region Relationship
         public IList<TweetHashtag> TweetHashtags { get; set; }

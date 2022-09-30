@@ -16,12 +16,13 @@ namespace Twitter.Domain.Models.Tweet
         public string TweetTitle { get; set; }
         public string TweetText { get; set; }
         public string UserId { get; set; }
+        public bool IsDelete { get; set; }
 
         #region Relationship
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
         public IList<TweetHashtag> TweetHashtags { get; set; }
-        public IList<TagTweet> TagTweets { get; set; }
+        public IList<Tag> Tags { get; set; }
         #endregion
     }
 }

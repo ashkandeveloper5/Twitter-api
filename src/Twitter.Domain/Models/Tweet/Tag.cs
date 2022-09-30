@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Domain.Models.UserRoles;
 
 namespace Twitter.Domain.Models.Tweet
 {
     public class Tag
     {
         [Key]
-        public string TagUserId { get; set; }
+        public string TU_Id { get; set; }
         public string TweetId { get; set; }
         public string UserId { get; set; }
 
         #region Relationship
-        public IList<TagTweet> TagTweets { get; set; }
-        public IList<TagUser> TagUsers { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public User User { get; set; }
+        [ForeignKey(nameof(TweetId))]
+        public Tweet Tweet { get; set; }
         #endregion
     }
 }
