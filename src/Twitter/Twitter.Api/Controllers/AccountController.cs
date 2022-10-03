@@ -8,6 +8,7 @@ using Twitter.Core.DTOs.Account;
 using Twitter.Core.Interfaces;
 using Twitter.Domain.Models.UserRoles;
 using Twitter.Core.Security;
+using Twitter.Core.JwtAuthentication;
 
 namespace Twitter.Api.Controllers
 {
@@ -16,9 +17,11 @@ namespace Twitter.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        public AccountController(IAccountService accountService)
+        private readonly IJwtAuthentication _jwtAuthentication;
+        public AccountController(IAccountService accountService,IJwtAuthentication jwtAuthentication)
         {
             _accountService = accountService;
+            _jwtAuthentication = jwtAuthentication;
         }
         #region Login
         [HttpPost("Login")]
@@ -34,26 +37,10 @@ namespace Twitter.Api.Controllers
             //Check is match password and email for login
             if (!_accountService.CheckMatchEmailAndPasswordForLogin(loginUserDto.Email, PasswordEncoder.EncodePasswordMd5(loginUserDto.Password))) return BadRequest(loginUserDto);
 
-            //Get user
-            User user = _accountService.GetUserByEmail(loginUserDto.Email);
-
-            #region Claims
-            //Claims
-            var claims = new List<System.Security.Claims.Claim>
-                {
-                new System.Security.Claims.Claim(ClaimTypes.NameIdentifier,user.UserId.ToString()),
-                new System.Security.Claims.Claim(ClaimTypes.Email,user.Email),
-                new System.Security.Claims.Claim(ClaimTypes.Name,user.Email),
-            };
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-            var properties = new AuthenticationProperties
-            {
-                IsPersistent = true
-            };
-            HttpContext.SignInAsync(principal, properties);
+            #region Jwt
+            var result = _jwtAuthentication.AuthenticationByEmail(loginUserDto).Result;
             #endregion
-            return NoContent();
+            return result != null ? Ok(result) : Unauthorized();
         }
         #endregion
         #region Register
