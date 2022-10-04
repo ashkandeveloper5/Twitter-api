@@ -32,6 +32,16 @@ namespace Twitter.Core.Services
             return _accountRepository.GetUserByEmail(userEmail).Password == userPassword ? true : false;
         }
 
+        public bool DeleteAccountUserByEmail(string userEmail)
+        {
+            return _accountRepository.DeleteAccountUser(_accountRepository.GetUserByEmail(userEmail));
+        }
+
+        public bool DeleteUserByEmail(string userEmail)
+        {
+            return _accountRepository.DeleteUser(_accountRepository.GetUserByEmail(userEmail));
+        }
+
         public bool EditPasswordUser(EditPasswordUserDto editPasswordUserDto, string userEmail)
         {
             string OldPassword = PasswordEncoder.EncodePasswordMd5(editPasswordUserDto.OldPassword);

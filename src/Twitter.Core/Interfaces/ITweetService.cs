@@ -12,6 +12,7 @@ namespace Twitter.Core.Interfaces
     {
         #region Tweet
         IList<GetTweetsDto> GetAllTweets();
+        IList<GetTweetsDto> GetAllTagUser(string userEmail);
         IList<GetTweetsDto> GetTweetsUser(string userEmail);
         bool AddNewTweet(AddNewTweetDto addNewTweetDto);
         bool DeleteTweet(DeleteTweetDto deleteTweetDto);

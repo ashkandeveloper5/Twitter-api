@@ -8,6 +8,7 @@ using Twitter.Domain.Interfaces;
 using Twitter.Domain.Models.UserRoles;
 using Microsoft.EntityFrameworkCore;
 using Twitter.Core.Utilities;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 
 namespace Twitter.Data.Repository
 {
@@ -19,9 +20,37 @@ namespace Twitter.Data.Repository
             _context = context;
         }
 
-        public bool AddPermission(Permission permission, string roleId)
+        public bool AddPermission(Permission permission)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Permissions.Add(permission);
+                SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool AddPermissionToRole(List<string> permissionsId, string roleId)
+        {
+            _context.RolePermissions.Where(r => r.RoleId == roleId).ToList().ForEach(p => { _context.Remove(p); });
+            Role role = _context.Roles.SingleOrDefault(r => r.RoleId == roleId);
+            try
+            {
+                foreach (var item in permissionsId)
+                {
+                    _context.RolePermissions.Add(new RolePermission { PermissionId = item, RoleId = roleId, RP_Id = UniqueCode.generateID() });
+                }
+                SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public bool AddRole(Role role)
@@ -43,12 +72,12 @@ namespace Twitter.Data.Repository
             try
             {
                 var getUser = _context.Users.Find(user);
-                var getRole=_context.Roles.Find(role);
+                var getRole = _context.Roles.Find(role);
                 _context.UserRoles.Add(new UserRole()
                 {
                     UR_Id = UniqueCode.generateID(),
-                    UserId=getUser.UserId,
-                    RoleId=getRole.RoleId,
+                    UserId = getUser.UserId,
+                    RoleId = getRole.RoleId,
                 });
                 SaveChanges();
                 return true;
@@ -57,6 +86,15 @@ namespace Twitter.Data.Repository
             {
                 return false;
             }
+        }
+
+        public bool DeletePermission(Permission permission)
+        {
+            var findPermission=_context.Permissions.SingleOrDefault(p=>p.PermissionId==permission.PermissionId);
+            if (findPermission == null) return false;
+            findPermission.IsDelete = true;
+            SaveChanges();
+            return true;
         }
 
         public bool DeleteRole(Role role)

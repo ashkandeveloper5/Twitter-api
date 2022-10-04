@@ -18,12 +18,13 @@ namespace Twitter.Api.Controllers
             _accountService = accountService;
         }
 
+        #region Tweet
         [HttpPost("AddTweet")]
         public IActionResult AddNewTweet([FromQuery] AddNewTweetDto addNewTweetDto)
         {
-            addNewTweetDto.UserId = _accountService.GetUserByEmail(User.Identity.Name).UserId;
+            addNewTweetDto.UserId = _accountService.GetUserByEmail(addNewTweetDto.UserEmail).UserId;
             if (!ModelState.IsValid) return BadRequest(addNewTweetDto);
-            if (!_tweetService.AddNewTweet(addNewTweetDto))return BadRequest(addNewTweetDto);
+            if (!_tweetService.AddNewTweet(addNewTweetDto)) return BadRequest(addNewTweetDto);
             return NoContent();
         }
         [HttpGet("GetAllTweets")]
@@ -32,5 +33,6 @@ namespace Twitter.Api.Controllers
             if (!ModelState.IsValid) return BadRequest();
             return Ok(_tweetService.GetAllTweets().ToList<GetTweetsDto>());
         }
+        #endregion
     }
 }

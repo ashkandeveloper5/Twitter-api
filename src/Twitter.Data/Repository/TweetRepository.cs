@@ -144,6 +144,19 @@ namespace Twitter.Data.Repository
             }
         }
 
+        public IList<Tweet> GetAllTagUser(string userEmail)
+        {
+            List<Tweet> tweetsTag = new List<Tweet>();
+            var findUser = _context.Users.FirstOrDefault(u=>u.Email==userEmail);
+            var tag = _context.Tags.Where(u=>u.UserId==findUser.UserId).ToList();
+            foreach (var item in tag)
+            {
+                tweetsTag.Add(_context.Tweets.SingleOrDefault(t=>t.TweetId==item.TweetId));
+            }
+            if (tweetsTag == null) return null;
+            return tweetsTag;
+        }
+
         public IList<Tweet> GetAllTweets()
         {
             return _context.Tweets.ToList();

@@ -23,6 +23,14 @@ namespace Twitter.Api.Controllers
             _accountService = accountService;
             _jwtAuthentication = jwtAuthentication;
         }
+        #region DeleteAccount
+        [HttpDelete("DeleteAccount")]
+        public ActionResult DeleteAccount(string userEmail)
+        {
+            var result =_accountService.DeleteAccountUserByEmail(userEmail);
+            return result ? NoContent() : Problem();
+        }
+        #endregion
         #region Login
         [HttpPost("Login")]
         public IActionResult Login([FromQuery] LoginUserByEmailDto loginUserDto)

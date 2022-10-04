@@ -13,6 +13,8 @@ namespace Twitter.Domain.Interfaces
         User GetUserById(string userId);
         User GetUserByEmail(string userEmail);
         User GetUserByPhoneNumber(string userPhoneNumber);
+        bool DeleteAccountUser(User user);
+        bool DeleteUser(User user);
         bool IsExistUser(User user);
         bool IsExistId(string userId);
         bool IsExistEmail(string userEmail);

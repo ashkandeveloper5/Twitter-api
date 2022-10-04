@@ -81,6 +81,18 @@ namespace Twitter.Core.Services
             return false;
         }
 
+        public IList<GetTweetsDto> GetAllTagUser(string userEmail)
+        {
+            IList<GetTweetsDto> result = new List<GetTweetsDto>();
+            var tweets= _tweetRepository.GetAllTagUser(userEmail);
+            foreach (var item in tweets)
+            {
+                if (item == null) continue;
+                result.Add(new GetTweetsDto { TweetText=item.TweetText,TweetTitle=item.TweetTitle});
+            }
+            return result;
+        }
+
         public IList<GetTweetsDto> GetAllTweets()
         {
             List<GetTweetsDto> result = new List<GetTweetsDto>();

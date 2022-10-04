@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Twitter.Domain.Models.Tweet;
+using Twitter.Domain.Models.UserRoles;
 
 namespace Twitter.Domain.Interfaces
 {
@@ -13,6 +14,7 @@ namespace Twitter.Domain.Interfaces
         void SaveChanges();
         #endregion
         #region Tweet
+        IList<Tweet> GetAllTagUser(string userEmail);
         Tweet GetTweetById(string tweetId);
         Tuple<Tweet,bool> AddReturnNewTweet(Tweet tweet);
         IList<Tweet> GetAllTweets();

@@ -21,6 +21,38 @@ namespace Twitter.Data.Repository
             _context = context;
         }
 
+        public bool DeleteAccountUser(User user)
+        {
+            try
+            {
+                _context.Users.SingleOrDefault(u => u.UserId == user.UserId).IsDelete = true;
+                _context.Tags.Where(u => u.UserId == user.UserId).ToList().ForEach(t => { t.IsDelete = true; });
+                _context.Tweets.Where(u => u.UserId == user.UserId).ToList().ForEach(t => { t.IsDelete = true; });
+                SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteUser(User user)
+        {
+            try
+            {
+                _context.Users.SingleOrDefault(u => u.UserId == user.UserId).IsDelete=true;
+                _context.Tags.Where(u => u.UserId == user.UserId).ToList().ForEach(t => { t.IsDelete = true; });
+                _context.Tweets.Where(u => u.UserId == user.UserId).ToList().ForEach(t => { t.IsDelete = true; });
+                SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool EditPasswordUser(string userEmail,string newPassword)
         {
             try

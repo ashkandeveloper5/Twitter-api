@@ -13,6 +13,7 @@ namespace Twitter.Core.DTOs.Tweet
         public string TweetTitle { get; set; }
         [Required]
         public string TweetText { get; set; }
+        public string UserEmail { get; set; }
         public string? UserId { get; set; }
     }
 }

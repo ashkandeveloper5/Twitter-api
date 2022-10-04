@@ -12,6 +12,8 @@ namespace Twitter.Core.Interfaces
     {
         #region User
         bool LoginUserByEmail(LoginUserByEmailDto loginUserByEmailDto);
+        bool DeleteAccountUserByEmail(string userEmail);
+        bool DeleteUserByEmail(string userEmail);
         bool RegisterUserByEmail(RegisterUserByEmailDto registerUserByEmailDto);
         User GetUserByEmail(string userEmail);
         bool EditPasswordUser(EditPasswordUserDto editPasswordUserDto,string userEmail);
