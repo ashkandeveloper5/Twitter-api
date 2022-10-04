@@ -11,6 +11,7 @@ namespace Twitter.Core.Interfaces
     public interface ITweetService
     {
         #region Tweet
+        IList<GetTweetsDto> GetTweetsByHashtag(string hashtagName);
         IList<GetTweetsDto> GetAllTweets();
         IList<GetTweetsDto> GetAllTagUser(string userEmail);
         IList<GetTweetsDto> GetTweetsUser(string userEmail);
@@ -18,6 +19,10 @@ namespace Twitter.Core.Interfaces
         bool DeleteTweet(DeleteTweetDto deleteTweetDto);
         bool EditTweet(EditTweetDto editTweetDto);
 
+        #endregion
+        #region Hashtag
+        IList<Hashtag> GetAllHashtag();
+        IList<Hashtag> SearchHashtag(string nameHashtag);
         #endregion
         #region Utilities
         IList<string> GetSplitTag(string text);

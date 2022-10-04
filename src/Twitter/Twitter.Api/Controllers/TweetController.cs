@@ -1,5 +1,7 @@
 ﻿
 
+using Twitter.Domain.Models.Tweet;
+
 namespace Twitter.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -13,7 +15,25 @@ namespace Twitter.Api.Controllers
             _tweetService = tweetService;
             _accountService = accountService;
         }
+        #region Hashtag
+        [HttpGet("GetTweetByHashtag")]
+        public ActionResult<List<Tweet>> GetTweetByHashtag([FromQuery] string hashtagName)
+        {
+            return Ok(_tweetService.GetTweetsByHashtag(hashtagName).ToList());
+        }
 
+        [HttpGet("GetAllHashtags")]
+        public ActionResult GetAllHashtags()
+        {
+            return Ok(_tweetService.GetAllHashtag().Select(h=>new {h.Text,h.Count,h.Views}));
+        }
+
+        [HttpGet("SearchHashtag")]
+        public ActionResult SearchHashtag([FromQuery] string nameHashtag)
+        {
+            return Ok(_tweetService.SearchHashtag(nameHashtag));
+        }
+        #endregion
         #region Tweet
         [HttpPost("AddTweet")]
         public IActionResult AddNewTweet([FromQuery] AddNewTweetDto addNewTweetDto)

@@ -14,6 +14,7 @@ namespace Twitter.Domain.Interfaces
         void SaveChanges();
         #endregion
         #region Tweet
+        Tweet GetTweetHashtag();
         IList<Tweet> GetAllTagUser(string userEmail);
         Tweet GetTweetById(string tweetId);
         Tuple<Tweet,bool> AddReturnNewTweet(Tweet tweet);
@@ -33,7 +34,10 @@ namespace Twitter.Domain.Interfaces
         Tuple<Hashtag,bool> AddReturnHashtag(Hashtag hashtag);
         bool IsExistHashtag(string hashtag);
         string GetHashtagId(string hashtagTitle);
+        IList<Hashtag> GetAllHashtag();
+        IList<Hashtag> SearchHashtag(string nameHashtag);
         bool AddTweetToHashtagsExist(string tweetId,string hashtagId);
+        IList<Tweet> GetTweetsByHashtag(string hashtagName);
         #endregion
     }
 }

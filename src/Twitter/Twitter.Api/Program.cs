@@ -79,7 +79,7 @@ app.UseCookiePolicy();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCustom();
+//app.UseCustom();
 #endregion
 
 app.UseEndpoints(endpoints =>

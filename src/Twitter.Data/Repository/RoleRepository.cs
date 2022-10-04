@@ -130,6 +130,11 @@ namespace Twitter.Data.Repository
             return _context.Roles.Include(r => r.RolePermissions).ThenInclude(r => r.Permission).ToList();
         }
 
+        public Role GetRoleByName(string nameRole)
+        {
+            return _context.Roles.SingleOrDefault(r=>r.RoleName.Contains(nameRole));
+        }
+
         public IList<Role> GetRolesUser(string userId)
         {
             IList<Role> roles = new List<Role>();

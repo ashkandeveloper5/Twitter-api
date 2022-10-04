@@ -17,6 +17,8 @@ namespace Twitter.Domain.Models.Tweet
         public string TweetText { get; set; }
         public string UserId { get; set; }
         public bool IsDelete { get; set; }
+        public int Likes { get; set; } = 0;
+        public int View { get; set; } = 0;
 
         #region Relationship
         [ForeignKey(nameof(UserId))]

@@ -11,6 +11,7 @@ namespace Twitter.Domain.Interfaces
     {
         #region Role
         bool AddRole(Role role);
+        Role GetRoleByName(string nameRole);
         bool AddPermissionToRole(List<string> permissionsId, string roleId);
         bool AddPermission(Permission permission);
         bool DeletePermission(Permission permission);

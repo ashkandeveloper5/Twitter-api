@@ -34,4 +34,3 @@ namespace Twitter.Core.Middlewares
         }
     }
 }
-}

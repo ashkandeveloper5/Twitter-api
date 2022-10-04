@@ -81,14 +81,19 @@ namespace Twitter.Core.Services
             return false;
         }
 
+        public IList<Hashtag> GetAllHashtag()
+        {
+            return _tweetRepository.GetAllHashtag();
+        }
+
         public IList<GetTweetsDto> GetAllTagUser(string userEmail)
         {
             IList<GetTweetsDto> result = new List<GetTweetsDto>();
-            var tweets= _tweetRepository.GetAllTagUser(userEmail);
+            var tweets = _tweetRepository.GetAllTagUser(userEmail);
             foreach (var item in tweets)
             {
                 if (item == null) continue;
-                result.Add(new GetTweetsDto { TweetText=item.TweetText,TweetTitle=item.TweetTitle});
+                result.Add(new GetTweetsDto { TweetText = item.TweetText, TweetTitle = item.TweetTitle });
             }
             return result;
         }
@@ -149,6 +154,17 @@ namespace Twitter.Core.Services
             return _tweetRepository.IsExistEmailTags(Tag).Distinct().ToList();
         }
 
+        public IList<GetTweetsDto> GetTweetsByHashtag(string hashtagName)
+        {
+            var result = new List<GetTweetsDto>();
+            var tweets = _tweetRepository.GetTweetsByHashtag(hashtagName).ToList();
+            foreach (var item in tweets)
+            {
+                result.Add(new GetTweetsDto { Like = item.Likes, TweetText = item.TweetText, TweetTitle = item.TweetTitle });
+            }
+            return result;
+        }
+
         public IList<GetTweetsDto> GetTweetsUser(string userEmail)
         {
             List<GetTweetsDto> result = new List<GetTweetsDto>();
@@ -157,6 +173,11 @@ namespace Twitter.Core.Services
                 result.Add(new GetTweetsDto { TweetText = item.TweetText, TweetTitle = item.TweetTitle });
             }
             return result;
+        }
+
+        public IList<Hashtag> SearchHashtag(string nameHashtag)
+        {
+            return _tweetRepository.SearchHashtag(nameHashtag);
         }
     }
 }

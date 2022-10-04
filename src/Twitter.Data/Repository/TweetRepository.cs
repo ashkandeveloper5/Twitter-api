@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace Twitter.Data.Repository
                 hashtag.HashtagId = UniqueCode.generateID();
                 _context.Hashtags.Add(hashtag);
                 SaveChanges();
-                return Tuple.Create(hashtag,true);
+                return Tuple.Create(hashtag, true);
             }
             catch (Exception)
             {
@@ -72,11 +73,11 @@ namespace Twitter.Data.Repository
                 tweet.TweetId = UniqueCode.generateID();
                 _context.Tweets.Add(tweet);
                 SaveChanges();
-                return Tuple.Create(tweet,true);
+                return Tuple.Create(tweet, true);
             }
             catch (Exception)
             {
-                return Tuple.Create(tweet,false);
+                return Tuple.Create(tweet, false);
             }
         }
 
@@ -84,7 +85,7 @@ namespace Twitter.Data.Repository
         {
             try
             {
-                tag.TU_Id= UniqueCode.generateID();
+                tag.TU_Id = UniqueCode.generateID();
                 _context.Tags.Add(tag);
                 SaveChanges();
                 return true;
@@ -106,6 +107,8 @@ namespace Twitter.Data.Repository
                     HashtagId = hashtagId,
                 };
                 _context.TweetHashtags.Add(tweetHashtag);
+                _context.Hashtags.SingleOrDefault(h => h.HashtagId == hashtagId).Count += 1;
+                _context.Hashtags.SingleOrDefault(h => h.HashtagId == hashtagId).Views += 1;
                 SaveChanges();
                 return true;
             }
@@ -144,14 +147,19 @@ namespace Twitter.Data.Repository
             }
         }
 
+        public IList<Hashtag> GetAllHashtag()
+        {
+            return _context.Hashtags.ToList().OrderBy(o => o.Count).ToList();
+        }
+
         public IList<Tweet> GetAllTagUser(string userEmail)
         {
             List<Tweet> tweetsTag = new List<Tweet>();
-            var findUser = _context.Users.FirstOrDefault(u=>u.Email==userEmail);
-            var tag = _context.Tags.Where(u=>u.UserId==findUser.UserId).ToList();
+            var findUser = _context.Users.FirstOrDefault(u => u.Email == userEmail);
+            var tag = _context.Tags.Where(u => u.UserId == findUser.UserId).ToList();
             foreach (var item in tag)
             {
-                tweetsTag.Add(_context.Tweets.SingleOrDefault(t=>t.TweetId==item.TweetId));
+                tweetsTag.Add(_context.Tweets.SingleOrDefault(t => t.TweetId == item.TweetId));
             }
             if (tweetsTag == null) return null;
             return tweetsTag;
@@ -169,12 +177,49 @@ namespace Twitter.Data.Repository
 
         public Tweet GetTweetById(string tweetId)
         {
-            return _context.Tweets.Include(u=>u.User).SingleOrDefault(t => t.TweetId == tweetId);
+            return _context.Tweets.Include(u => u.User).SingleOrDefault(t => t.TweetId == tweetId);
+        }
+
+        public Tweet GetTweetHashtag()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<Tweet> GetTweetsByHashtag(string hashtagName)
+        {
+            var result = new List<Tweet>();
+            var tweetHashtags = _context.TweetHashtags.ToList();
+            var Hashtags = _context.Hashtags.Where(h => h.Text.Contains(hashtagName)).ToList();
+            var tweetIds = new List<string>();
+            for (int i = 0; i < tweetHashtags.Count; i++)
+            {
+                for (int j = 0; j < Hashtags.Count; j++)
+                {
+                    if (tweetHashtags[i].HashtagId.ToString() == Hashtags[j].HashtagId.ToString())
+                    {
+                        tweetIds.Add(tweetHashtags[i].TweetId);
+                    }
+                }
+            }
+            var tweets = _context.Tweets.ToList();
+            for (int i = 0; i < tweets.Count; i++)
+            {
+                for (int j = 0; j < tweetIds.Count; j++)
+                {
+                    if (tweets[i].TweetId.ToString() == tweetIds[j].ToString())
+                    {
+                        result.Add(_context.Tweets.SingleOrDefault(t => t.TweetId == tweetIds[j]));
+                    }
+                }
+            }
+            SaveChanges();
+            return result;
         }
 
         public IList<Tweet> GetTweetsUser(string userEmail)
         {
             User user = _context.Users.SingleOrDefault(u => u.Email == userEmail);
+            _context.Tweets.Where(t => t.UserId == user.UserId).ToList().ForEach(v => v.View += 1);
             return _context.Tweets.Where(t => t.UserId == user.UserId).ToList();
         }
 
@@ -187,7 +232,7 @@ namespace Twitter.Data.Repository
         {
             for (int i = 0; i < userEmails.Count; i++)
             {
-                if (_context.Users.SingleOrDefault(u => u.Email == userEmails[i].ToString())==null)
+                if (_context.Users.SingleOrDefault(u => u.Email == userEmails[i].ToString()) == null)
                     userEmails.RemoveAt(i);
             }
             return userEmails;
@@ -195,12 +240,17 @@ namespace Twitter.Data.Repository
 
         public bool IsExistHashtag(string hashtag)
         {
-            return _context.Hashtags.SingleOrDefault(h => h.Text == hashtag)!=null ? true : false;
+            return _context.Hashtags.SingleOrDefault(h => h.Text == hashtag) != null ? true : false;
         }
 
         public void SaveChanges()
         {
             _context.SaveChanges();
+        }
+
+        public IList<Hashtag> SearchHashtag(string nameHashtag)
+        {
+            return _context.Hashtags.Where(h => h.Text.Contains(nameHashtag)).ToList().OrderBy(o => o.Count).ToList();
         }
     }
 }
