@@ -243,6 +243,14 @@ namespace Twitter.Data.Repository
             return _context.Hashtags.SingleOrDefault(h => h.Text == hashtag) != null ? true : false;
         }
 
+        public bool LikeTweet(Tweet tweet)
+        {
+            tweet.Likes += 1;
+            tweet.View += 1;
+            SaveChanges();
+            return true;
+        }
+
         public void SaveChanges()
         {
             _context.SaveChanges();
@@ -251,6 +259,28 @@ namespace Twitter.Data.Repository
         public IList<Hashtag> SearchHashtag(string nameHashtag)
         {
             return _context.Hashtags.Where(h => h.Text.Contains(nameHashtag)).ToList().OrderBy(o => o.Count).ToList();
+        }
+
+        public IList<Tweet> ShowTheTopTweets(int count)
+        {
+            var result = new List<Tweet>();
+            var tweets= _context.Tweets.OrderBy(t => t.View).ToList();
+            for (int i = 0; i < count; i++)
+            {
+                result.Add(tweets[i]);
+            }
+            return result;
+        }
+
+        public IList<Hashtag> ShowTheTopHashtags(int count)
+        {
+            var result = new List<Hashtag>();
+            var hashtags = _context.Hashtags.OrderBy(t => t.Views).ToList();
+            for (int i = 0; i < count; i++)
+            {
+                result.Add(hashtags[i]);
+            }
+            return result;
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Twitter.Api.Controllers
         {
             _roleService = roleService;
         }
+        #region CRUD Role
         [HttpPost("AddRole")]
         public ActionResult AddRole([FromQuery] AddRoleDto addRoleDto)
         {
@@ -33,5 +34,6 @@ namespace Twitter.Api.Controllers
                 return NoContent();
             return BadRequest();
         }
+        #endregion
     }
 }

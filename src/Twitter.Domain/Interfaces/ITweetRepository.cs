@@ -15,6 +15,9 @@ namespace Twitter.Domain.Interfaces
         #endregion
         #region Tweet
         Tweet GetTweetHashtag();
+        IList<Tweet> ShowTheTopTweets(int count);
+        IList<Hashtag> ShowTheTopHashtags(int count);
+        bool LikeTweet(Tweet tweet);
         IList<Tweet> GetAllTagUser(string userEmail);
         Tweet GetTweetById(string tweetId);
         Tuple<Tweet,bool> AddReturnNewTweet(Tweet tweet);

@@ -11,6 +11,9 @@ namespace Twitter.Core.Interfaces
     public interface ITweetService
     {
         #region Tweet
+        bool LikeTweet(string tweetId);
+        IList<GetTweetsDto> ShowTheTopTweets(int count);
+        IList<GetHashtagDto> ShowTheTopHashtags(int count);
         IList<GetTweetsDto> GetTweetsByHashtag(string hashtagName);
         IList<GetTweetsDto> GetAllTweets();
         IList<GetTweetsDto> GetAllTagUser(string userEmail);

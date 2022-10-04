@@ -175,9 +175,36 @@ namespace Twitter.Core.Services
             return result;
         }
 
+        public bool LikeTweet(string tweetId)
+        {
+            return _tweetRepository.LikeTweet(_tweetRepository.GetTweetById(tweetId));
+        }
+
         public IList<Hashtag> SearchHashtag(string nameHashtag)
         {
             return _tweetRepository.SearchHashtag(nameHashtag);
+        }
+
+        public IList<GetHashtagDto> ShowTheTopHashtags(int count)
+        {
+            var result = new List<GetHashtagDto>();
+            var hashtags = _tweetRepository.ShowTheTopHashtags(count);
+            foreach (var item in hashtags)
+            {
+                result.Add(new GetHashtagDto { Name = item.Text, Count = item.Count, Views = item.Views });
+            }
+            return result;
+        }
+
+        public IList<GetTweetsDto> ShowTheTopTweets(int count)
+        {
+            var result = new List<GetTweetsDto>();
+            var tweets = _tweetRepository.ShowTheTopTweets(count);
+            foreach (var item in tweets)
+            {
+                result.Add(new GetTweetsDto { View = item.View, Like = item.Likes, TweetText = item.TweetText, TweetTitle = item.TweetTitle });
+            }
+            return result;
         }
     }
 }
