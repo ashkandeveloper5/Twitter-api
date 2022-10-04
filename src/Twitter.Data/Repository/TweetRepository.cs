@@ -10,6 +10,7 @@ using Twitter.Data.Context;
 using Twitter.Domain.Interfaces;
 using Twitter.Domain.Models.Tweet;
 using Twitter.Domain.Models.UserRoles;
+//using static System.Net.Mime.MediaTypeNames;
 
 namespace Twitter.Data.Repository
 {
@@ -138,6 +139,7 @@ namespace Twitter.Data.Repository
             try
             {
                 _context.Tweets.Update(tweet);
+                tweet.View += 1;
                 SaveChanges();
                 return true;
             }
@@ -149,6 +151,8 @@ namespace Twitter.Data.Repository
 
         public IList<Hashtag> GetAllHashtag()
         {
+            _context.Hashtags.ToList().OrderBy(o => o.Count).ToList().ForEach(h => h.Views += 1);
+            SaveChanges();
             return _context.Hashtags.ToList().OrderBy(o => o.Count).ToList();
         }
 
@@ -161,12 +165,19 @@ namespace Twitter.Data.Repository
             {
                 tweetsTag.Add(_context.Tweets.SingleOrDefault(t => t.TweetId == item.TweetId));
             }
+            foreach (var item in tweetsTag)
+            {
+                _context.Tweets.SingleOrDefault(t => t.TweetId == item.TweetId).View += 1;
+            }
+            SaveChanges();
             if (tweetsTag == null) return null;
             return tweetsTag;
         }
 
         public IList<Tweet> GetAllTweets()
         {
+            _context.Tweets.ToList().ForEach(t => t.View += 1);
+            SaveChanges();
             return _context.Tweets.ToList();
         }
 
@@ -178,11 +189,6 @@ namespace Twitter.Data.Repository
         public Tweet GetTweetById(string tweetId)
         {
             return _context.Tweets.Include(u => u.User).SingleOrDefault(t => t.TweetId == tweetId);
-        }
-
-        public Tweet GetTweetHashtag()
-        {
-            throw new NotImplementedException();
         }
 
         public IList<Tweet> GetTweetsByHashtag(string hashtagName)
@@ -212,6 +218,11 @@ namespace Twitter.Data.Repository
                     }
                 }
             }
+
+            //////////////////////////
+            //TODO
+            //Add View To Tweets
+
             SaveChanges();
             return result;
         }
@@ -264,7 +275,7 @@ namespace Twitter.Data.Repository
         public IList<Tweet> ShowTheTopTweets(int count)
         {
             var result = new List<Tweet>();
-            var tweets= _context.Tweets.OrderBy(t => t.View).ToList();
+            var tweets = _context.Tweets.OrderBy(t => t.View).ToList();
             for (int i = 0; i < count; i++)
             {
                 result.Add(tweets[i]);
@@ -275,12 +286,27 @@ namespace Twitter.Data.Repository
         public IList<Hashtag> ShowTheTopHashtags(int count)
         {
             var result = new List<Hashtag>();
-            var hashtags = _context.Hashtags.OrderBy(t => t.Views).ToList();
+            var hashtags = _context.Hashtags.OrderBy(t => t.Count).ToList();
             for (int i = 0; i < count; i++)
             {
                 result.Add(hashtags[i]);
+                AddViewToHashtag(hashtags[i].HashtagId);
             }
             return result;
+        }
+
+        public bool AddViewToTweet(string tweetId)
+        {
+            _context.Tweets.SingleOrDefault(t => t.TweetId == tweetId).View += 1;
+            SaveChanges();
+            return true;
+        }
+
+        public bool AddViewToHashtag(string hashtagId)
+        {
+            _context.Hashtags.SingleOrDefault(t => t.HashtagId == hashtagId).Views += 1;
+            SaveChanges();
+            return true;
         }
     }
 }

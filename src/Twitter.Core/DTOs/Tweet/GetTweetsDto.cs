@@ -8,6 +8,7 @@ namespace Twitter.Core.DTOs.Tweet
 {
     public class GetTweetsDto
     {
+        public string TweetId { get; set; }
         public string TweetTitle { get; set; }
         public string TweetText { get; set; }
         public int Like { get; set; } = 0;

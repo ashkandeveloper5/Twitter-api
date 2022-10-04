@@ -64,7 +64,7 @@ namespace Twitter.Api.Controllers
         }
         #endregion
         #region Like
-        [HttpGet("LikeTweet")]
+        [HttpPost("LikeTweet")]
         public ActionResult LikeTweet([FromQuery] string tweetId)
         {
             return _tweetService.LikeTweet(tweetId) ? NoContent() : BadRequest();

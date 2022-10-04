@@ -14,7 +14,8 @@ namespace Twitter.Domain.Interfaces
         void SaveChanges();
         #endregion
         #region Tweet
-        Tweet GetTweetHashtag();
+        bool AddViewToTweet(string tweetId);
+        bool AddViewToHashtag(string hashtagId);
         IList<Tweet> ShowTheTopTweets(int count);
         IList<Hashtag> ShowTheTopHashtags(int count);
         bool LikeTweet(Tweet tweet);

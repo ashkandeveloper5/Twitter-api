@@ -71,6 +71,16 @@ namespace Twitter.Core.Services
             //End
         }
 
+        public bool AddViewToHashtag(string hashtagId)
+        {
+            return _tweetRepository.AddViewToHashtag(hashtagId);
+        }
+
+        public bool AddViewToTweet(string tweetId)
+        {
+            return _tweetRepository.AddViewToTweet(tweetId);
+        }
+
         public bool DeleteTweet(DeleteTweetDto deleteTweetDto)
         {
             return false;
@@ -103,7 +113,7 @@ namespace Twitter.Core.Services
             List<GetTweetsDto> result = new List<GetTweetsDto>();
             foreach (var item in _tweetRepository.GetAllTweets())
             {
-                result.Add(new GetTweetsDto { TweetText = item.TweetText, TweetTitle = item.TweetTitle });
+                result.Add(new GetTweetsDto { TweetText = item.TweetText, TweetTitle = item.TweetTitle, TweetId = item.TweetId });
             }
             return result;
         }
@@ -160,7 +170,7 @@ namespace Twitter.Core.Services
             var tweets = _tweetRepository.GetTweetsByHashtag(hashtagName).ToList();
             foreach (var item in tweets)
             {
-                result.Add(new GetTweetsDto { Like = item.Likes, TweetText = item.TweetText, TweetTitle = item.TweetTitle });
+                result.Add(new GetTweetsDto { Like = item.Likes, TweetText = item.TweetText, TweetTitle = item.TweetTitle, TweetId = item.TweetId });
             }
             return result;
         }
@@ -191,7 +201,7 @@ namespace Twitter.Core.Services
             var hashtags = _tweetRepository.ShowTheTopHashtags(count);
             foreach (var item in hashtags)
             {
-                result.Add(new GetHashtagDto { Name = item.Text, Count = item.Count, Views = item.Views });
+                result.Add(new GetHashtagDto { Name = item.Text, Count = item.Count, Views = item.Views, HahtagId = item.HashtagId });
             }
             return result;
         }
@@ -202,7 +212,7 @@ namespace Twitter.Core.Services
             var tweets = _tweetRepository.ShowTheTopTweets(count);
             foreach (var item in tweets)
             {
-                result.Add(new GetTweetsDto { View = item.View, Like = item.Likes, TweetText = item.TweetText, TweetTitle = item.TweetTitle });
+                result.Add(new GetTweetsDto { View = item.View, Like = item.Likes, TweetText = item.TweetText, TweetTitle = item.TweetTitle, TweetId = item.TweetId });
             }
             return result;
         }

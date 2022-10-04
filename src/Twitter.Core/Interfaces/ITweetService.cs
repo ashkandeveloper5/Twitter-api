@@ -12,6 +12,8 @@ namespace Twitter.Core.Interfaces
     {
         #region Tweet
         bool LikeTweet(string tweetId);
+        bool AddViewToTweet(string tweetId);
+        bool AddViewToHashtag(string hashtagId);
         IList<GetTweetsDto> ShowTheTopTweets(int count);
         IList<GetHashtagDto> ShowTheTopHashtags(int count);
         IList<GetTweetsDto> GetTweetsByHashtag(string hashtagName);
