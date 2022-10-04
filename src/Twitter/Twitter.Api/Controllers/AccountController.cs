@@ -1,15 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Claims;
-using Twitter.Core.DTOs.Account;
-using Twitter.Core.Interfaces;
-using Twitter.Domain.Models.UserRoles;
-using Twitter.Core.Security;
-using Twitter.Core.JwtAuthentication;
-
+﻿
 namespace Twitter.Api.Controllers
 {
     [Route("api/[controller]")]

@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Twitter.Core.DTOs.Tweet;
-using Twitter.Core.Interfaces;
+﻿
 
 namespace Twitter.Api.Controllers
 {

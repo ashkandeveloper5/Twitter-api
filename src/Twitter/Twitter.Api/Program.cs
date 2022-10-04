@@ -1,26 +1,19 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Twitter.Core.Interfaces;
-using Twitter.Core.JwtAuthentication;
-using Twitter.Core.Services;
-using Twitter.Data.Context;
-using Twitter.Data.Repository;
-using Twitter.Domain.Interfaces;
-using Twitter.IoC.DependencyContainer;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+#region Base Services
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddResponseCaching();
 builder.Services.AddMemoryCache();
+
+#endregion
+
 #region IoC
 RegisterServices(builder.Services);
 #endregion
@@ -75,6 +68,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+#region Middleware
 app.UseHttpsRedirection();
 app.UseRouting();
 
@@ -83,8 +77,10 @@ app.UseCors("EnableCors");
 app.UseStaticFiles();
 app.UseCookiePolicy();
 
-//app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseCustom();
+#endregion
 
 app.UseEndpoints(endpoints =>
 {
