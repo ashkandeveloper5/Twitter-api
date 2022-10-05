@@ -21,6 +21,32 @@ namespace Twitter.Data.Repository
             _context = context;
         }
 
+        public Task<bool> AddProfile(string userEmail, string path)
+        {
+            var user = GetUserByEmail(userEmail);
+            var Profile = new ProfileUser()
+            {
+                ProfileId = UniqueCode.generateID(),
+                UserId = user.UserId,
+                Path = path,
+            };
+            try
+            {
+                _context.ProfileUsers.Add(Profile);
+                SaveChanges();
+                return Task.FromResult(true);
+            }
+            catch (Exception)
+            {
+                return Task.FromResult(false);
+            }
+        }
+
+        public Task<bool> CheckFullImage(string userEmail)
+        {
+            return _context.ProfileUsers.Where(u => u.UserId == GetUserByEmail(userEmail).UserId).ToList().Count >= 5 ? Task.FromResult(false) : Task.FromResult(true);
+        }
+
         public bool DeleteAccountUser(User user)
         {
             try
@@ -41,7 +67,7 @@ namespace Twitter.Data.Repository
         {
             try
             {
-                _context.Users.SingleOrDefault(u => u.UserId == user.UserId).IsDelete=true;
+                _context.Users.SingleOrDefault(u => u.UserId == user.UserId).IsDelete = true;
                 _context.Tags.Where(u => u.UserId == user.UserId).ToList().ForEach(t => { t.IsDelete = true; });
                 _context.Tweets.Where(u => u.UserId == user.UserId).ToList().ForEach(t => { t.IsDelete = true; });
                 SaveChanges();
@@ -53,11 +79,11 @@ namespace Twitter.Data.Repository
             }
         }
 
-        public bool EditPasswordUser(string userEmail,string newPassword)
+        public bool EditPasswordUser(string userEmail, string newPassword)
         {
             try
             {
-                User user = _context.Users.SingleOrDefault(u=>u.Email==userEmail);
+                User user = _context.Users.SingleOrDefault(u => u.Email == userEmail);
                 if (user != null) user.Password = newPassword;
                 SaveChanges();
                 return true;
@@ -80,6 +106,17 @@ namespace Twitter.Data.Repository
             {
                 return false;
             }
+        }
+
+        public Task<List<string>> GetImagesPath(string userEmail)
+        {
+            var result = new List<string>();
+            var profiles = _context.ProfileUsers.Where(p => p.UserId == GetUserByEmail(userEmail).UserId).ToList();
+            foreach (var profile in profiles)
+            {
+                result.Add(profile.Path);
+            }
+            return Task.FromResult(result);
         }
 
         public User GetUserByEmail(string userEmail)
@@ -126,14 +163,14 @@ namespace Twitter.Data.Repository
 
         public bool MatchPasswordForChange(string userEmail, string oldPassword)
         {
-           return _context.Users.SingleOrDefault(u => u.Email == userEmail).Password == oldPassword ? true : false;
+            return _context.Users.SingleOrDefault(u => u.Email == userEmail).Password == oldPassword ? true : false;
         }
 
         public bool RegisterUserByEmail(User user)
         {
             try
             {
-                if (_context.Users.SingleOrDefault(u=>u.Email==user.Email) != null) return false;
+                if (_context.Users.SingleOrDefault(u => u.Email == user.Email) != null) return false;
                 user.UserId = UniqueCode.generateID();
                 _context.Users.Add(user);
                 SaveChanges();

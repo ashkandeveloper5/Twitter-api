@@ -27,6 +27,16 @@ namespace Twitter.Core.Services
             _accountRepository = accountRepository;
         }
 
+        public Task<bool> AddProfile(string userEmail, string path)
+        {
+            return _accountRepository.AddProfile(userEmail, path);
+        }
+
+        public Task<bool> CheckFullImage(string userEmail)
+        {
+            return _accountRepository.CheckFullImage(userEmail);
+        }
+
         public bool CheckMatchEmailAndPasswordForLogin(string userEmail, string userPassword)
         {
             return _accountRepository.GetUserByEmail(userEmail).Password == userPassword ? true : false;
@@ -47,6 +57,11 @@ namespace Twitter.Core.Services
             string OldPassword = PasswordEncoder.EncodePasswordMd5(editPasswordUserDto.OldPassword);
             string Password = PasswordEncoder.EncodePasswordMd5(editPasswordUserDto.NewPassword);
             return _accountRepository.MatchPasswordForChange(userEmail, OldPassword) ? _accountRepository.EditPasswordUser(userEmail, Password) : false;
+        }
+
+        public Task<List<string>> GetImagesPath(string userEmail)
+        {
+            return _accountRepository.GetImagesPath(userEmail);
         }
 
         public User GetUserByEmail(string userEmail)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,9 @@ namespace Twitter.IoC.DependencyContainer
     {
         public static void RegisterServices(IServiceCollection service)
         {
+            //File Extension Content Type Provider
+            service.AddSingleton<FileExtensionContentTypeProvider>();
+
             //Jwt Authentication
             service.AddScoped<IJwtAuthentication,JwtAuthentication>();
 

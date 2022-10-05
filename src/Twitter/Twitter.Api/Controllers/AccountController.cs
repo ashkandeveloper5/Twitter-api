@@ -1,23 +1,62 @@
-﻿
+﻿using System.Net.Mime;
+using Twitter.Core.Utilities;
+using Twitter.Domain.Models.UserRoles;
+using System.IO;
+using System.IO.Compression;
+using Microsoft.AspNetCore.StaticFiles;
+
 namespace Twitter.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly FileExtensionContentTypeProvider _fileExtensionContentTypeProvider;
         private readonly IAccountService _accountService;
         private readonly IJwtAuthentication _jwtAuthentication;
-        public AccountController(IAccountService accountService,IJwtAuthentication jwtAuthentication)
+        public AccountController(IAccountService accountService, IJwtAuthentication jwtAuthentication, FileExtensionContentTypeProvider fileExtensionContentTypeProvider)
         {
             _accountService = accountService;
             _jwtAuthentication = jwtAuthentication;
+            _fileExtensionContentTypeProvider = fileExtensionContentTypeProvider;
         }
-        #region DeleteAccount
-        [HttpDelete("DeleteAccount")]
-        public ActionResult DeleteAccount(string userEmail)
+        #region DownloadImage
+        [HttpGet("DownloadImage")]
+        public ActionResult DownloadImage([FromQuery] string path)
         {
-            var result =_accountService.DeleteAccountUserByEmail(userEmail);
-            return result ? NoContent() : Problem();
+            if (System.IO.File.Exists("/UserImage/" + path)) return NotFound();
+            var file = System.IO.File.ReadAllBytes(System.IO.Path.Combine(Directory.GetCurrentDirectory()) + "/wwwroot/UserImage/" + path);
+            if (!_fileExtensionContentTypeProvider.TryGetContentType(path, out var ContentType))
+            {
+                ContentType = "application/octet-stream";
+            }
+            return File(file, ContentType, Path.GetFileName(path));
+        }
+        #endregion
+        #region ShowImagesPath
+        [HttpGet("ShowImagesPath")]
+        public ActionResult ShowImagesPath([FromQuery] string userEmail)
+        {
+            return Ok(_accountService.GetImagesPath(userEmail).Result);
+        }
+        #endregion
+        #region AddImage
+        [HttpPost("AddProfile")]
+        public ActionResult AddProfile([FromQuery] AddProfileDto addProfileDto)
+        {
+            if (addProfileDto.Profile != null)
+            {
+                string imagePath = "";
+                string path = UniqueCode.generateID() + System.IO.Path.GetExtension(addProfileDto.Profile.FileName);
+                if (!_accountService.CheckFullImage(addProfileDto.Email).Result) return BadRequest();
+                if (!_accountService.AddProfile(addProfileDto.Email, path).Result) return BadRequest();
+                imagePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserImage", path);
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    addProfileDto.Profile.CopyTo(stream);
+                }
+            }
+            return NoContent();
         }
         #endregion
         #region Login
@@ -63,8 +102,16 @@ namespace Twitter.Api.Controllers
         {
             if (!User.Identity.IsAuthenticated) return BadRequest(editPasswordUserDto);
             if (!ModelState.IsValid) return BadRequest(editPasswordUserDto);
-            if (!_accountService.EditPasswordUser(editPasswordUserDto, User.Identity.Name)) return BadRequest(editPasswordUserDto);
+            if (!_accountService.EditPasswordUser(editPasswordUserDto, editPasswordUserDto.Email)) return BadRequest(editPasswordUserDto);
             return NoContent();
+        }
+        #endregion
+        #region DeleteAccount
+        [HttpDelete("DeleteAccount")]
+        public ActionResult DeleteAccount(string userEmail)
+        {
+            var result = _accountService.DeleteAccountUserByEmail(userEmail);
+            return result ? NoContent() : Problem();
         }
         #endregion
     }

@@ -10,6 +10,11 @@ namespace Twitter.Core.DTOs.Account
     public class EditPasswordUserDto
     {
         [Required]
+        [EmailAddress]
+        [MinLength(6)]
+        [MaxLength(200)]
+        public string Email { get; set; }
+        [Required]
         [DataType(DataType.Password)]
         [MinLength(6)]
         [MaxLength(100)]

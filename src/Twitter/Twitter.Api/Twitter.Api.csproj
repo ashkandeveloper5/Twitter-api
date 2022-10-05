@@ -25,4 +25,8 @@
     <ProjectReference Include="..\..\Twitter.IoC\Twitter.IoC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\UserImage\" />
+  </ItemGroup>
+
 </Project>

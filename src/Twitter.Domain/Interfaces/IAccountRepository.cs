@@ -11,8 +11,11 @@ namespace Twitter.Domain.Interfaces
     {
         #region User
         User GetUserById(string userId);
+        Task<bool> AddProfile(string userEmail,string path);
         User GetUserByEmail(string userEmail);
+        Task<bool> CheckFullImage(string userEmail);
         User GetUserByPhoneNumber(string userPhoneNumber);
+        Task<List<string>> GetImagesPath(string userEmail);
         bool DeleteAccountUser(User user);
         bool DeleteUser(User user);
         bool IsExistUser(User user);

@@ -12,7 +12,10 @@ namespace Twitter.Core.Interfaces
     {
         #region User
         bool LoginUserByEmail(LoginUserByEmailDto loginUserByEmailDto);
+        Task<bool> AddProfile(string userEmail,string path);
         bool DeleteAccountUserByEmail(string userEmail);
+        Task<bool> CheckFullImage(string userEmail);
+        Task<List<string>> GetImagesPath(string userEmail);
         bool DeleteUserByEmail(string userEmail);
         bool RegisterUserByEmail(RegisterUserByEmailDto registerUserByEmailDto);
         User GetUserByEmail(string userEmail);

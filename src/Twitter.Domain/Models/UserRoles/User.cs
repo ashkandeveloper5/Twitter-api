@@ -40,6 +40,7 @@ namespace Twitter.Domain.Models.UserRoles
         public IList<Claim> Claims { get; set; }
         public IList<Tweet.Tweet> Tweets { get; set; }
         public IList<Tag> Tags { get; set; }
+        public IList<ProfileUser> ProfileUsers { get; set; }
         #endregion
     }
 }
