@@ -36,9 +36,12 @@ namespace Twitter.Core.JwtAuthentication
             User user = _accountService.GetUserByEmail(loginUserByEmailDto.Email);
             if (user != null && user.Email == loginUserByEmailDto.Email && user.Password == PasswordEncoder.EncodePasswordMd5(loginUserByEmailDto.Password))
             {
-                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Verify"));
-                var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TwitterapiTwitterapiTwitterapiTwitterapi"));
+                var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256Signature);
+                var encryptionKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1111111111111111"));
+                var encryptionCredentials = new EncryptingCredentials(encryptionKey, SecurityAlgorithms.Aes128KW,SecurityAlgorithms.Aes128CbcHmacSha256);
                 var roles = _roleService.GetRolesUser(user.UserId);
+                #region Claims
                 var authClaims = new List<System.Security.Claims.Claim>
                 {
                      new System.Security.Claims.Claim(ClaimTypes.NameIdentifier,user.UserId),
@@ -48,30 +51,26 @@ namespace Twitter.Core.JwtAuthentication
                 {
                     authClaims.Add(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, userRole.RoleName));
                 }
-                var tokenOption = new JwtSecurityToken(
-                    issuer: "http://localhost:11352",
-                    claims: authClaims,
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: signingCredentials
-                    );
-                var tokeString = new JwtSecurityTokenHandler().WriteToken(tokenOption);
-                return tokeString;
+                #endregion
+                var descriptor = new SecurityTokenDescriptor()
+                {
+                    Subject = new ClaimsIdentity(authClaims),
+                    Audience = "Twitter",
+                    Issuer = "TwitterServer",
+                    IssuedAt=DateTime.Now,
+                    Expires=DateTime.Now.AddDays(7),
+                    NotBefore=DateTime.Now,
+                    SigningCredentials=signingCredentials,
+                    EncryptingCredentials=encryptionCredentials,
+                    CompressionAlgorithm=CompressionAlgorithms.Deflate,
+                };
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var securityToken = tokenHandler.CreateToken(descriptor);
+
+
+                return tokenHandler.WriteToken(securityToken);
             }
             return null;
-        }
-        public JwtSecurityToken GetToken(List<System.Security.Claims.Claim> authClaims)
-        {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddHours(3),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-                );
-
-            return token;
         }
     }
 }

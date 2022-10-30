@@ -20,7 +20,7 @@ builder.Services.AddMemoryCache();
 RegisterServices(builder.Services);
 #endregion
 #region Server
-builder.Services.AddDbContext<TwitterContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")));
+builder.Services.AddDbContext<TwitterContext>(options => { options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString")); }, ServiceLifetime.Transient);
 #endregion
 #region Cookies
 //builder.Services.AddHttpClient("TwitterClient", client =>
@@ -35,29 +35,31 @@ builder.Services.AddDbContext<TwitterContext>(options => options.UseSqlServer(bu
 //});
 #endregion
 #region JwtAuthentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(optioin =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters()
+    optioin.RequireHttpsMetadata = true;
+    optioin.SaveToken = true;
+    optioin.TokenValidationParameters = new TokenValidationParameters()
     {
-        ValidateIssuer = true,
-        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero,
+        RequireExpirationTime = true,
         ValidateLifetime = true,
-        ValidateIssuerSigningKey=true,
-        ValidIssuer= "http://localhost:11352",
-        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Verify"))
+        ValidateIssuer = true,
+        ValidIssuer = "TwitterServer",
+        ValidateAudience = true,
+        ValidAudience = "Twitter",
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TwitterapiTwitterapiTwitterapiTwitterapi")),
+        TokenDecryptionKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("1111111111111111")),
     };
-});
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("EnableCors", Builder =>
-    {
-        Builder
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        //.AllowCredentials()
-        //.AllowAnyOrigin()
-        .Build();
-    });
+    //optioin.Events = new JwtBearerEvents
+    //{
+    //    OnTokenValidated = async (context) =>
+    //    {
+    //        var claims = (context.Principal.Identity as ClaimsIdentity).Claims.ToList();
+    //        var userUid = claims.Where(u => u.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value;
+    //    },
+    //};
 });
 #endregion
 
@@ -73,8 +75,6 @@ if (app.Environment.IsDevelopment())
 #region Middleware
 app.UseHttpsRedirection();
 app.UseRouting();
-
-app.UseCors("EnableCors");
 
 app.UseStaticFiles();
 app.UseCookiePolicy();

@@ -4,6 +4,7 @@ using Twitter.Domain.Models.UserRoles;
 using System.IO;
 using System.IO.Compression;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Twitter.Api.Controllers
 {
@@ -22,6 +23,7 @@ namespace Twitter.Api.Controllers
         }
         #region DownloadImage
         [HttpGet("DownloadImage")]
+        [Authorize(Roles ="Public")]
         public ActionResult DownloadImage([FromQuery] string path)
         {
             if (System.IO.File.Exists("/UserImage/" + path)) return NotFound();
@@ -35,6 +37,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region ShowImagesPath
         [HttpGet("ShowImagesPath")]
+        [Authorize(Roles ="Public")]
         public ActionResult ShowImagesPath([FromQuery] string userEmail)
         {
             return Ok(_accountService.GetImagesPath(userEmail).Result);
@@ -42,6 +45,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region AddImage
         [HttpPost("AddProfile")]
+        [Authorize(Roles ="Public")]
         public ActionResult AddProfile([FromQuery] AddProfileDto addProfileDto)
         {
             if (addProfileDto.Profile != null)
@@ -98,6 +102,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region EditPassword
         [HttpPost("EditPassword")]
+        [Authorize(Roles ="Public")]
         public IActionResult EditPassword([FromQuery] EditPasswordUserDto editPasswordUserDto)
         {
             if (!User.Identity.IsAuthenticated) return BadRequest(editPasswordUserDto);
@@ -108,6 +113,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region DeleteAccount
         [HttpDelete("DeleteAccount")]
+        [Authorize(Roles ="Public")]
         public ActionResult DeleteAccount(string userEmail)
         {
             var result = _accountService.DeleteAccountUserByEmail(userEmail);

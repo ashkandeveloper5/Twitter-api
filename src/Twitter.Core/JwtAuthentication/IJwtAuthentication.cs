@@ -12,6 +12,5 @@ namespace Twitter.Core.JwtAuthentication
     public interface IJwtAuthentication
     {
         Task<string> AuthenticationByEmail(LoginUserByEmailDto loginUserByEmailDto);
-       JwtSecurityToken GetToken(List<System.Security.Claims.Claim> authClaims);
     }
 }

@@ -1,9 +1,12 @@
 ﻿
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace Twitter.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles ="Public")]
     public class UserController : ControllerBase
     {
         private readonly ITweetService _tweetService;

@@ -1,10 +1,12 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Twitter.Core.DTOs.Role;
 
 namespace Twitter.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles ="Admin")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleService;

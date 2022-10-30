@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Twitter.Domain.Models.Tweet;
 
@@ -6,6 +7,7 @@ namespace Twitter.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles ="Public")]
     public class TweetController : ControllerBase
     {
         private readonly ITweetService _tweetService;
