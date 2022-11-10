@@ -22,8 +22,8 @@ namespace Twitter.Api.Controllers
         public IActionResult AddNewTweet([FromBody] AddNewTweetDto addNewTweetDto)
         {
             addNewTweetDto.UserId = _accountService.GetUserByEmail(User.Identity.Name).UserId;
-            if (!ModelState.IsValid) return BadRequest(addNewTweetDto);
-            if (!_tweetService.AddNewTweet(addNewTweetDto)) return BadRequest(addNewTweetDto);
+            if (!ModelState.IsValid) return BadRequest();
+            if (!_tweetService.AddNewTweet(addNewTweetDto)) return BadRequest();
             return Ok();
         }
         [HttpGet("GetAllTweets")]

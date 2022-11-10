@@ -69,13 +69,13 @@ namespace Twitter.Api.Controllers
         {
             if (User.Identity.IsAuthenticated) HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            if (!ModelState.IsValid) return BadRequest(loginUserDto);
+            if (!ModelState.IsValid) return BadRequest();
 
             //Method LoginUserByEmail is for checking the availability of email.
-            if (!_accountService.LoginUserByEmail(loginUserDto)) return BadRequest(loginUserDto);
+            if (!_accountService.LoginUserByEmail(loginUserDto)) return BadRequest();
 
             //Check is match password and email for login
-            if (!_accountService.CheckMatchEmailAndPasswordForLogin(loginUserDto.Email, PasswordEncoder.EncodePasswordMd5(loginUserDto.Password))) return BadRequest(loginUserDto);
+            if (!_accountService.CheckMatchEmailAndPasswordForLogin(loginUserDto.Email, PasswordEncoder.EncodePasswordMd5(loginUserDto.Password))) return BadRequest();
 
             #region Jwt
             var result = _jwtAuthentication.AuthenticationByEmail(loginUserDto).Result;
@@ -87,15 +87,15 @@ namespace Twitter.Api.Controllers
         [HttpPost("Register")]
         public IActionResult Register([FromBody] RegisterUserByEmailDto registerUserDto)
         {
-            if (!ModelState.IsValid) return BadRequest(registerUserDto);
-            if (!_accountService.RegisterUserByEmail(registerUserDto)) return BadRequest(registerUserDto);
+            if (!ModelState.IsValid) return BadRequest();
+            if (!_accountService.RegisterUserByEmail(registerUserDto)) return BadRequest();
             return Ok();
         }
         #endregion
         #region Logout
         [HttpPost("Logout")]
         [Authorize]
-        public IActionResult Login()
+        public IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok();
@@ -106,9 +106,9 @@ namespace Twitter.Api.Controllers
         [Authorize(Roles ="Public")]
         public IActionResult EditPassword([FromBody] EditPasswordUserDto editPasswordUserDto)
         {
-            if (!User.Identity.IsAuthenticated) return BadRequest(editPasswordUserDto);
-            if (!ModelState.IsValid) return BadRequest(editPasswordUserDto);
-            if (!_accountService.EditPasswordUser(editPasswordUserDto, User.Identity.Name)) return BadRequest(editPasswordUserDto);
+            if (!User.Identity.IsAuthenticated) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
+            if (!_accountService.EditPasswordUser(editPasswordUserDto, User.Identity.Name)) return BadRequest();
             return Ok();
         }
         #endregion
