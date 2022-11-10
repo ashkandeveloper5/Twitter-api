@@ -11,7 +11,6 @@ namespace Twitter.Core.DTOs.Account
 {
     public class AddProfileDto
     {
-        public string Email { get; set; }
         public IFormFile Profile { get; set; }
     }
 }

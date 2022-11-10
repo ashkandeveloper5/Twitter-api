@@ -19,14 +19,14 @@ namespace Twitter.Api.Controllers
 
         #region Tweet
         [HttpGet("ShowTweets")]
-        public ActionResult<IList<GetTweetsDto>> ShowTweets([FromQuery] string userEmail)
+        public ActionResult<IList<GetTweetsDto>> ShowTweets()
         {
-            return Ok(_tweetService.GetTweetsUser(userEmail).ToList());
+            return Ok(_tweetService.GetTweetsUser(User.Identity.Name).ToList());
         }
         [HttpGet("ShowTagsTweet")]
-        public ActionResult<IList<GetTweetsDto>> ShowTagsTweet([FromQuery] string userEmail)
+        public ActionResult<IList<GetTweetsDto>> ShowTagsTweet()
         {
-            return Ok(_tweetService.GetAllTagUser(userEmail));
+            return Ok(_tweetService.GetAllTagUser(User.Identity.Name));
         }
         #endregion
         #region User

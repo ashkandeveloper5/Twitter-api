@@ -276,6 +276,7 @@ namespace Twitter.Data.Repository
         {
             var result = new List<Tweet>();
             var tweets = _context.Tweets.OrderBy(t => t.View).ToList();
+            if (count > tweets.Count) count = tweets.Count;
             for (int i = 0; i < count; i++)
             {
                 result.Add(tweets[i]);
@@ -287,6 +288,7 @@ namespace Twitter.Data.Repository
         {
             var result = new List<Hashtag>();
             var hashtags = _context.Hashtags.OrderBy(t => t.Count).ToList();
+            if (count > hashtags.Count) count = hashtags.Count;
             for (int i = 0; i < count; i++)
             {
                 result.Add(hashtags[i]);

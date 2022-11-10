@@ -19,9 +19,9 @@ namespace Twitter.Api.Controllers
         }
         #region Tweets
         [HttpPost("AddTweet")]
-        public IActionResult AddNewTweet([FromQuery] AddNewTweetDto addNewTweetDto)
+        public IActionResult AddNewTweet([FromBody] AddNewTweetDto addNewTweetDto)
         {
-            addNewTweetDto.UserId = _accountService.GetUserByEmail(addNewTweetDto.UserEmail).UserId;
+            addNewTweetDto.UserId = _accountService.GetUserByEmail(User.Identity.Name).UserId;
             if (!ModelState.IsValid) return BadRequest(addNewTweetDto);
             if (!_tweetService.AddNewTweet(addNewTweetDto)) return BadRequest(addNewTweetDto);
             return NoContent();
@@ -35,7 +35,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region Hashtag
         [HttpGet("GetTweetByHashtag")]
-        public ActionResult<List<Tweet>> GetTweetByHashtag([FromQuery] string hashtagName)
+        public ActionResult<List<Tweet>> GetTweetByHashtag([FromBody] string hashtagName)
         {
             return Ok(_tweetService.GetTweetsByHashtag(hashtagName).ToList());
         }
@@ -47,7 +47,7 @@ namespace Twitter.Api.Controllers
         }
 
         [HttpGet("SearchHashtag")]
-        public ActionResult SearchHashtag([FromQuery] string nameHashtag)
+        public ActionResult SearchHashtag([FromBody] string nameHashtag)
         {
             return Ok(_tweetService.SearchHashtag(nameHashtag));
         }
@@ -67,7 +67,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region Like
         [HttpPost("LikeTweet")]
-        public ActionResult LikeTweet([FromQuery] string tweetId)
+        public ActionResult LikeTweet([FromBody] string tweetId)
         {
             return _tweetService.LikeTweet(tweetId) ? NoContent() : BadRequest();
         }

@@ -24,7 +24,7 @@ namespace Twitter.Api.Controllers
         #region DownloadImage
         [HttpGet("DownloadImage")]
         [Authorize(Roles ="Public")]
-        public ActionResult DownloadImage([FromQuery] string path)
+        public ActionResult DownloadImage([FromBody] string path)
         {
             if (System.IO.File.Exists("/UserImage/" + path)) return NotFound();
             var file = System.IO.File.ReadAllBytes(System.IO.Path.Combine(Directory.GetCurrentDirectory()) + "/wwwroot/UserImage/" + path);
@@ -38,22 +38,22 @@ namespace Twitter.Api.Controllers
         #region ShowImagesPath
         [HttpGet("ShowImagesPath")]
         [Authorize(Roles ="Public")]
-        public ActionResult ShowImagesPath([FromQuery] string userEmail)
+        public ActionResult ShowImagesPath()
         {
-            return Ok(_accountService.GetImagesPath(userEmail).Result);
+            return Ok(_accountService.GetImagesPath(User.Identity.Name).Result);
         }
         #endregion
-        #region AddImage
-        [HttpPost("AddProfile")]
+        #region UploadProfile
+        [HttpPost("UploadProfile")]
         [Authorize(Roles ="Public")]
-        public ActionResult AddProfile([FromQuery] AddProfileDto addProfileDto)
+        public ActionResult UploadProfile([FromBody] AddProfileDto addProfileDto)
         {
             if (addProfileDto.Profile != null)
             {
                 string imagePath = "";
                 string path = UniqueCode.generateID() + System.IO.Path.GetExtension(addProfileDto.Profile.FileName);
-                if (!_accountService.CheckFullImage(addProfileDto.Email).Result) return BadRequest();
-                if (!_accountService.AddProfile(addProfileDto.Email, path).Result) return BadRequest();
+                if (!_accountService.CheckFullImage(User.Identity.Name).Result) return BadRequest();
+                if (!_accountService.AddProfile(User.Identity.Name, path).Result) return BadRequest();
                 imagePath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserImage", path);
                 using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
@@ -65,7 +65,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region Login
         [HttpPost("Login")]
-        public IActionResult Login([FromQuery] LoginUserByEmailDto loginUserDto)
+        public IActionResult Login([FromBody] LoginUserByEmailDto loginUserDto)
         {
             if (User.Identity.IsAuthenticated) HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
@@ -85,7 +85,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region Register
         [HttpPost("Register")]
-        public IActionResult Register([FromQuery] RegisterUserByEmailDto registerUserDto)
+        public IActionResult Register([FromBody] RegisterUserByEmailDto registerUserDto)
         {
             if (!ModelState.IsValid) return BadRequest(registerUserDto);
             if (!_accountService.RegisterUserByEmail(registerUserDto)) return BadRequest(registerUserDto);
@@ -94,6 +94,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region Logout
         [HttpPost("Logout")]
+        [Authorize]
         public IActionResult Login()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -101,22 +102,22 @@ namespace Twitter.Api.Controllers
         }
         #endregion
         #region EditPassword
-        [HttpPost("EditPassword")]
+        [HttpPut("EditPassword")]
         [Authorize(Roles ="Public")]
-        public IActionResult EditPassword([FromQuery] EditPasswordUserDto editPasswordUserDto)
+        public IActionResult EditPassword([FromBody] EditPasswordUserDto editPasswordUserDto)
         {
             if (!User.Identity.IsAuthenticated) return BadRequest(editPasswordUserDto);
             if (!ModelState.IsValid) return BadRequest(editPasswordUserDto);
-            if (!_accountService.EditPasswordUser(editPasswordUserDto, editPasswordUserDto.Email)) return BadRequest(editPasswordUserDto);
+            if (!_accountService.EditPasswordUser(editPasswordUserDto, User.Identity.Name)) return BadRequest(editPasswordUserDto);
             return NoContent();
         }
         #endregion
         #region DeleteAccount
         [HttpDelete("DeleteAccount")]
         [Authorize(Roles ="Public")]
-        public ActionResult DeleteAccount(string userEmail)
+        public ActionResult DeleteAccount()
         {
-            var result = _accountService.DeleteAccountUserByEmail(userEmail);
+            var result = _accountService.DeleteAccountUserByEmail(User.Identity.Name);
             return result ? NoContent() : Problem();
         }
         #endregion

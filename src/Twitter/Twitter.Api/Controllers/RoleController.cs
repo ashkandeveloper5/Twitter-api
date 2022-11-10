@@ -16,21 +16,21 @@ namespace Twitter.Api.Controllers
         }
         #region CRUD Role
         [HttpPost("AddRole")]
-        public ActionResult AddRole([FromQuery] AddRoleDto addRoleDto)
+        public ActionResult AddRole([FromBody] AddRoleDto addRoleDto)
         {
             if (_roleService.AddRole(addRoleDto))
                 return NoContent();
             return BadRequest();
         }
-        [HttpPost("EditRole")]
-        public ActionResult EditRole([FromQuery] EditRoleDto editRoleDto)
+        [HttpPut("EditRole")]
+        public ActionResult EditRole([FromBody] EditRoleDto editRoleDto)
         {
             if (_roleService.EditRole(editRoleDto))
                 return NoContent();
             return BadRequest();
         }
-        [HttpPost("DeleteRole")]
-        public ActionResult DeleteRole([FromQuery] string roleName)
+        [HttpDelete("DeleteRole")]
+        public ActionResult DeleteRole([FromBody] string roleName)
         {
             if (_roleService.DeleteRole(roleName))
                 return NoContent();
