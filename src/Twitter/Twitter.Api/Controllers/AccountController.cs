@@ -60,7 +60,7 @@ namespace Twitter.Api.Controllers
                     addProfileDto.Profile.CopyTo(stream);
                 }
             }
-            return NoContent();
+            return Ok();
         }
         #endregion
         #region Login
@@ -89,7 +89,7 @@ namespace Twitter.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(registerUserDto);
             if (!_accountService.RegisterUserByEmail(registerUserDto)) return BadRequest(registerUserDto);
-            return NoContent();
+            return Ok();
         }
         #endregion
         #region Logout
@@ -98,7 +98,7 @@ namespace Twitter.Api.Controllers
         public IActionResult Login()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return NoContent();
+            return Ok();
         }
         #endregion
         #region EditPassword
@@ -109,7 +109,7 @@ namespace Twitter.Api.Controllers
             if (!User.Identity.IsAuthenticated) return BadRequest(editPasswordUserDto);
             if (!ModelState.IsValid) return BadRequest(editPasswordUserDto);
             if (!_accountService.EditPasswordUser(editPasswordUserDto, User.Identity.Name)) return BadRequest(editPasswordUserDto);
-            return NoContent();
+            return Ok();
         }
         #endregion
         #region DeleteAccount
@@ -118,7 +118,7 @@ namespace Twitter.Api.Controllers
         public ActionResult DeleteAccount()
         {
             var result = _accountService.DeleteAccountUserByEmail(User.Identity.Name);
-            return result ? NoContent() : Problem();
+            return result ? Ok() : Problem();
         }
         #endregion
     }

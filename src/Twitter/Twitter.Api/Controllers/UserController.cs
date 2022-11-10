@@ -34,7 +34,7 @@ namespace Twitter.Api.Controllers
         public ActionResult DeleteUser(string userEmail)
         {
             var result = _accountService.DeleteUserByEmail(userEmail);
-            return result == true ? NoContent() : Problem();
+            return result == true ? Ok() : Problem();
         }
         #endregion
     }

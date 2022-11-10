@@ -7,7 +7,7 @@ namespace Twitter.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Public")]
+    //[Authorize(Roles ="Public")]
     public class TweetController : ControllerBase
     {
         private readonly ITweetService _tweetService;
@@ -24,7 +24,7 @@ namespace Twitter.Api.Controllers
             addNewTweetDto.UserId = _accountService.GetUserByEmail(User.Identity.Name).UserId;
             if (!ModelState.IsValid) return BadRequest(addNewTweetDto);
             if (!_tweetService.AddNewTweet(addNewTweetDto)) return BadRequest(addNewTweetDto);
-            return NoContent();
+            return Ok();
         }
         [HttpGet("GetAllTweets")]
         public ActionResult<List<GetTweetsDto>> GetAllTweets()
@@ -35,7 +35,7 @@ namespace Twitter.Api.Controllers
         #endregion
         #region Hashtag
         [HttpGet("GetTweetByHashtag")]
-        public ActionResult<List<Tweet>> GetTweetByHashtag([FromBody] string hashtagName)
+        public ActionResult<List<GetTweetsDto>> GetTweetByHashtag(string hashtagName)
         {
             return Ok(_tweetService.GetTweetsByHashtag(hashtagName).ToList());
         }
@@ -56,20 +56,20 @@ namespace Twitter.Api.Controllers
         [HttpGet("PopularTweets")]
         public ActionResult<List<GetTweetsDto>> PopularTweets(int countForShow)
         {
-            return _tweetService.ShowTheTopTweets(countForShow).ToList();
+            return Ok(_tweetService.ShowTheTopTweets(countForShow).ToList());
         }
 
         [HttpGet("PopularHashtags")]
         public ActionResult<List<GetHashtagDto>> PopularHashtags(int countForShow)
         {
-            return _tweetService.ShowTheTopHashtags(countForShow).ToList();
+            return Ok(_tweetService.ShowTheTopHashtags(countForShow).ToList());
         }
         #endregion
         #region Like
         [HttpPost("LikeTweet")]
         public ActionResult LikeTweet([FromBody] string tweetId)
         {
-            return _tweetService.LikeTweet(tweetId) ? NoContent() : BadRequest();
+            return _tweetService.LikeTweet(tweetId) ? Ok() : BadRequest();
         }
         #endregion
     }

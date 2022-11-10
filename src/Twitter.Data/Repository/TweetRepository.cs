@@ -219,12 +219,24 @@ namespace Twitter.Data.Repository
                 }
             }
 
-            //////////////////////////
-            //TODO
-            //Add View To Tweets
+            for (int i = 0; i < Hashtags.Count; i++)
+            {
+                for (int j = 0; j < _context.Hashtags.Count(); j++)
+                {
+                    if (Hashtags[i].HashtagId == _context.Hashtags.ToList()[j].HashtagId) _context.Hashtags.ToList()[j].Views += 1;
+                }
+            }
+
+            var output = new List<Tweet>();
+            foreach (var item in result)
+            {
+                if (output.Contains(item)) continue;
+                output.Add(item);
+                _context.Tweets.FirstOrDefault(t => t.TweetId == item.TweetId).View += 1;
+            }
 
             SaveChanges();
-            return result;
+            return output;
         }
 
         public IList<Tweet> GetTweetsUser(string userEmail)

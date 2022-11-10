@@ -138,7 +138,7 @@ namespace Twitter.Core.Services
                 }
             }
             Hashtags.Distinct().ToList();
-            return Hashtags;
+            return Hashtags.Distinct().ToList();
         }
 
         public IList<string> GetSplitTag(string text)
@@ -170,7 +170,7 @@ namespace Twitter.Core.Services
             var tweets = _tweetRepository.GetTweetsByHashtag(hashtagName).ToList();
             foreach (var item in tweets)
             {
-                result.Add(new GetTweetsDto { Like = item.Likes, TweetText = item.TweetText, TweetTitle = item.TweetTitle, TweetId = item.TweetId });
+                result.Add(new GetTweetsDto { Like = item.Likes, TweetText = item.TweetText, TweetTitle = item.TweetTitle, TweetId = item.TweetId,View=item.View });
             }
             return result;
         }

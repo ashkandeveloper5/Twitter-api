@@ -19,21 +19,21 @@ namespace Twitter.Api.Controllers
         public ActionResult AddRole([FromBody] AddRoleDto addRoleDto)
         {
             if (_roleService.AddRole(addRoleDto))
-                return NoContent();
+                return Ok();
             return BadRequest();
         }
         [HttpPut("EditRole")]
         public ActionResult EditRole([FromBody] EditRoleDto editRoleDto)
         {
             if (_roleService.EditRole(editRoleDto))
-                return NoContent();
+                return Ok();
             return BadRequest();
         }
         [HttpDelete("DeleteRole")]
         public ActionResult DeleteRole([FromBody] string roleName)
         {
             if (_roleService.DeleteRole(roleName))
-                return NoContent();
+                return Ok();
             return BadRequest();
         }
         #endregion
